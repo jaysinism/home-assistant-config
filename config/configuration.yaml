@@ -1,0 +1,89 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: xx.xxxxx
+  longitude: -xx.xxxx
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 0
+  # metric for Metric, imperial for Imperial
+  unit_system: imperial
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: America/Phoenix
+  # Customization file
+  customize: !include customize.yaml
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: example.duckdns.org:8123
+
+# Discover some devices automatically
+discovery:
+
+# Sensors
+sensor:
+  # Weather prediction
+  - platform: yr
+# Sun Custom Config
+sun:
+  monitored_conditions:
+    - elevation
+    - sunrise
+    - sunset
+  scan_interval:
+    minutes: 5
+    
+#Life360 Device Tracker
+device_tracker:
+  - platform: life360
+    username: !secret life360_username
+    password: !secret life360_password
+    max_gps_accuracy: 200
+    prefix: life360
+    show_as_state: driving, moving, places
+
+# Konnected Alarm Panel Configuration
+konnected:
+  access_token: bk9ku4mh3fjf
+  api_host: http://192.168.1.85:8123
+  devices:
+    - id: 807d3a3e0137
+      binary_sensors:
+        - zone: 1
+          type: door
+          name: 'Front Door'
+        - zone: 2
+          type: door
+          name: 'Garage Door Entry'
+        - zone: 3
+          type: door
+          name: 'Patio Door'  
+        - zone: 4
+          type: motion
+          name: 'Motion Sensor'
+        - zone: 5
+          type: window
+          name: 'KITW1'
+        - zone: 6
+          type: window
+          name: 'KITW2'
+#      switches:
+#        - zone: out
+#          name: siren
+
+# Alarm Control Panel Config
+alarm_control_panel:
+  - platform: manual
+  
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+# Disable Alarm alarm_control_panel: !include alarm.yaml
+# Diasble Alarm panel_custom: !include panel_custom.yaml
